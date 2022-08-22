@@ -200,8 +200,8 @@ const updateGroup = async (req, res) => {
           }
         })
         .catch(err => {
-          res.status(500).send({
-            message: "Could not delete group skill with id=" + id
+          res.status(500).json({
+            message: "Could not delete group skill "
           
           })});}
 
