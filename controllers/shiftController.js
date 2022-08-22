@@ -244,8 +244,8 @@ const deleteShift = async (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Could not delete shift with id=" + id
+      res.status(500).json({
+        message: "Could not delete shift "
       
       })});}
 
@@ -253,9 +253,7 @@ const affectUserToShift = async (req, res, next) => {
   try {
     const { userId } = req.body;
     const shift = await db.shift.findByPk(req.body.shiftId) 
-    // const startDate = new Date(req.body.startDate);
-    // const endDate = new Date(req.body.endDate)
-    // const shift = await db.shift.create({startDate,endDate}) 
+    
     
     const user = await db.user.findByPk(userId) 
    
