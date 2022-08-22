@@ -6,7 +6,6 @@ module.exports = db = {};
 initialize();
 
 async function initialize() {
-  
   const { host, port, user, password, database } = config.database;
   const connection = await mysql.createConnection({
     host,
@@ -16,11 +15,10 @@ async function initialize() {
   });
   // await connection.query("DROP DATABASE "+ database)
   // await connection.query("CREATE DATABASE "+ database)
-//  await connection.query(`CREATE DATABASE IF NOT EXISTS  \`${database}\`;`);
- const sequelize = new Sequelize(database, user, password, {
+  //  await connection.query(`CREATE DATABASE IF NOT EXISTS  \`${database}\`;`);
+  const sequelize = new Sequelize(database, user, password, {
     dialect: "mysql",
   });
-
 
   db.shift = require("../models/shift")(sequelize);
   db.type = require("../models/type")(sequelize);
@@ -31,36 +29,51 @@ async function initialize() {
   db.userSkills = require("../models/userSkills")(sequelize);
   db.groupSkills = require("../models/groupSkills")(sequelize);
   db.shiftSkills = require("../models/shiftSkills")(sequelize);
-  db.skillsBelongsToGroupSkills = require("../models/skillsBelongsToGroupSkills")(sequelize);
-  
+  db.skillsBelongsToGroupSkills =
+    require("../models/skillsBelongsToGroupSkills")(sequelize);
+
   //foreignKey
- db.shift.belongsToMany(db.user, { through: 'affectations' });
- db.user.belongsToMany(db.shift, { through: 'affectations' });
+  db.shift.belongsToMany(db.user, { through: "affectations" });
+  db.user.belongsToMany(db.shift, { through: "affectations" });
 
- db.pool.belongsToMany(db.shift,{through: 'ShiftPools'});
- db.shift.belongsToMany(db.pool,{through: 'ShiftPools'});
- 
- db.user.belongsToMany(db.skills, { through: 'userSkills' });
- db.skills.belongsToMany(db.user, { through: 'userSkills' });
- 
- db.shift.belongsTo(db.type, {
-  foreignKey: "typeId",
-  as: "type",
-  
-});
-db.type.hasMany(db.shift, { as: "shifts" });
-db.pool.belongsToMany(db.skills, { through: 'poolSkills' });
+  db.pool.belongsToMany(db.shift, { through: "ShiftPools" });
+  db.shift.belongsToMany(db.pool, { through: "ShiftPools" });
 
-db.pool.belongsToMany(db.user, { through: 'userPool' });
-db.user.belongsToMany(db.pool, { through: 'userPool' });
+  db.user.belongsToMany(db.skills, { through: "userSkills" });
+  db.skills.belongsToMany(db.user, { through: "userSkills" });
 
-db.shiftSkills.belongsTo(db.skills, {foreignKey:"skillId",as:"skill",onDelete:"CASCADE"});
-db.shiftSkills.belongsTo(db.shift, {foreignKey:"shiftId",as:"shift",onDelete:"CASCADE"});
-db.shiftSkills.belongsTo(db.groupSkills,{foreignKey:"groupSkillId",as:"groupSkill",onDelete:"CASCADE"})
+  db.shift.belongsTo(db.type, {
+    foreignKey: "typeId",
+    as: "type",
+  });
+  db.type.hasMany(db.shift, { as: "shifts" });
+  db.pool.belongsToMany(db.skills, { through: "poolSkills" });
 
+  db.pool.belongsToMany(db.user, { through: "userPool" });
+  db.user.belongsToMany(db.pool, { through: "userPool" });
 
-db.groupSkills.belongsToMany(db.skills, {through: 'skillsBelongsToGroupSkills'});
-db.skills.belongsToMany(db.groupSkills, { through: 'skillsBelongsToGroupSkills'});
+  db.shiftSkills.belongsTo(db.skills, {
+    foreignKey: "skillId",
+    as: "skill",
+    onDelete: "CASCADE",
+  });
+  db.shiftSkills.belongsTo(db.shift, {
+    foreignKey: "shiftId",
+    as: "shift",
+    onDelete: "CASCADE",
+  });
+  db.shiftSkills.belongsTo(db.groupSkills, {
+    foreignKey: "groupSkillId",
+    as: "groupSkill",
+    onDelete: "CASCADE",
+  });
 
-    (await sequelize.sync({ alter: false }));
+  db.groupSkills.belongsToMany(db.skills, {
+    through: "skillsBelongsToGroupSkills",
+  });
+  db.skills.belongsToMany(db.groupSkills, {
+    through: "skillsBelongsToGroupSkills",
+  });
+
+  await sequelize.sync({ alter: false });
 }
