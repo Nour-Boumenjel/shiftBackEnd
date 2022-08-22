@@ -3,7 +3,7 @@ const db = require('../utils/initializeDataBase');
 
 
 const deleteSkillFromGroupSkill = async (req, res) => {
-    // const id = req.params.id;
+   
     const groupSkillId = req.params.groupSkillId;
      const skillId = req.params.skillId;
    await db.skillsBelongsToGroupSkills.destroy({

@@ -53,7 +53,6 @@ router.delete(
   "/affectation/:shiftId/:userId",
   affectationController.deleteAffectation
 );
-// router.delete('/deleteSkillFromGroupSkill/:groupSkillId/:skillId',skillsBelongsToGroupSkillsController.deleteSkillFromGroupSkill);
 
 router.put("/shifts/:shiftId", shiftController.updateShift);
 router.put(
