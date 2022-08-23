@@ -19,7 +19,7 @@ router.get("/Types", typeController.getAllTypes);
 router.get("/users", userController.getAllUsers);
 router.get("/affectation", affectationController.getAllShiftUser);
 router.get("/userSkills", userSkillsController.getSkillsByUser);
-router.get("/bestSuggestion", userSkillsController.getBestSuggestion);
+router.post("/bestSuggestion", userSkillsController.getBestSuggestion);
 
 router.get("/Shifts/:shiftId", shiftController.getShiftById);
 router.get("/Skills/:skillId", skillsController.getSkillById);

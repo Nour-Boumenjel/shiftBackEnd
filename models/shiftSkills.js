@@ -4,11 +4,7 @@ module.exports = model;
 
 function model(sequelize) {
   const attributes = {
-    
-    effectif: { type: DataTypes.STRING,
-    
-    },
-   
+    effectif: { type: DataTypes.STRING },
   };
 
   const options = {};
