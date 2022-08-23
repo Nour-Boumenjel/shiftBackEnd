@@ -80,7 +80,7 @@ const deleteType = async (req, res) => {
         }
       })
       .catch(err => {
-        res.status(500).send({
+        res.status(500).json({
           message: "Could not delete type with id=" + id
         
         })});}

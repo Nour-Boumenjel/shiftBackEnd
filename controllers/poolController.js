@@ -164,28 +164,8 @@ if(pool){
  *
  */
 
-//  const updatePool = async (req, res) => {
-//   const id = req.params.id;
-//   await db.pool.update(req.body, {
-//     where: { id: id }
-//   })
-//     .then(num => {
-//       if (num == 1) {
-//         res.status(200).send({ msg: "pool updated" });
-//       } else {
-//         res.send({
-//           message: `Cannot update pool with id=${id}. Maybe pool was not found or req.body is empty!`
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Error updating pool with id=" + id
-//       });
-//     });
-// };
 
-// i have changed type:updatePool to pool:updatePool
+
 const updatePool = async (req, res) => {
 
    try {
@@ -242,7 +222,7 @@ const updatePool = async (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
+      res.status(500).json({
         message: "Could not delete pool with id=" + id
       
       })});}
@@ -253,16 +233,7 @@ const updatePool = async (req, res) => {
 
 
 
-// const deletePool = async(req, res)=> {
-//     try{
-//     const poolId = req.params;
-//     const deletedPool = await db.pool.destroy({where: {id : poolId}})
-//     res.status(204).json({ message: "pool deleted " });
-//     }
-//     catch(error) {
-//     return res.status(500).json({error})
-//     }
-// }
+
 
 
 const addMemberToPool = async (req, res, next) => {

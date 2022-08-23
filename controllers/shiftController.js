@@ -62,8 +62,7 @@ const createShift = async(req,res) => {
     groupSkills = [...groupSkills,...groupSkillItem.skills.map(skill => {return {...skill,groupId:groupSkillItem.groupId}})]
   
         })
-  //  console.log(req.body)
-  //  console.log(groupSkills)
+
     
     try{
    const shift = await db.shift.create({startDate: req.body.startDate,endDate:req.body.endDate,typeId:req.body.typeId})
@@ -78,14 +77,7 @@ const createShift = async(req,res) => {
        return res.status(201).json(
           shift,
         ); 
-    // const result = await shift.addSkill(groupSkills, {
-    //   through: { selfGranted: true },
-    // });
-    // if (result.toString() === "0")
-    //   return res
-    //     .status(400)
-    //     .json({ message: "this skill is already affected to shift" });
-    // res.send("skill affected to shift");
+   
 
  
 
@@ -100,32 +92,7 @@ const createShift = async(req,res) => {
 
 
 
-// const createShift = async(req,res) => {
-//   try{
-      // const selectedGroupSkills = req.body.selectedGroupSkills
-  // console.log(req.body)
-//   const shift = await db.shift.create({startDate: req.body.startDate,endDate:req.body.endDate,typeId:req.body.typeId})
-    //  const shift = await db.shift.findByPk(shift.shiftId)
-    // if (!shift) {
-    //   return res.send("you need to provide the correct shift id");
-    // }
-    // const groupSkills = []
-    //   selectedGroupSkills.foreach(groupSkillItem => {
-    //   groupSkills = [...groupSkills,...groupSkillItem.skills]
-    //   })
-    //   console.log(groupSkills)
-    // const result = await shift.addSkill(idShift,Skills,{
-    //   through: { selfGranted: true },  
-    // })
-//      return res.status(201).json(
-//     shift,
-//   );
-//   }
-//   catch(error){
-//       return res.status(500).json({error: error.message})
 
-//   }
-// }
 
 
 
@@ -261,27 +228,6 @@ const updateShift = async (req, res) => {
  *       description: No shift was found
  *
  */
-/**fix this */
-// const deleteShift = async (req, res) => {
-//   const id = req.params.id;
-//  await db.shifts.destroy({
-//     where: { id: id }
-//   })
-//     .then(num => {
-//       if (num == 1) {
-//         res.status(204).json({ message: "shift deleted " });
-//       } else {
-//         res.status(404).json({
-//           message: `Cannot delete shift with id=${id}. Maybe shift was not found!`
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Could not delete shift with id=" + id
-      
-//       })});}
-    
 
 const deleteShift = async (req, res) => {
   const id = req.params.id;
@@ -298,8 +244,8 @@ const deleteShift = async (req, res) => {
       }
     })
     .catch(err => {
-      res.status(500).send({
-        message: "Could not delete shift with id=" + id
+      res.status(500).json({
+        message: "Could not delete shift "
       
       })});}
 
@@ -307,9 +253,7 @@ const affectUserToShift = async (req, res, next) => {
   try {
     const { userId } = req.body;
     const shift = await db.shift.findByPk(req.body.shiftId) 
-    // const startDate = new Date(req.body.startDate);
-    // const endDate = new Date(req.body.endDate)
-    // const shift = await db.shift.create({startDate,endDate}) 
+    
     
     const user = await db.user.findByPk(userId) 
    
@@ -333,39 +277,6 @@ const affectUserToShift = async (req, res, next) => {
 };
 
 
-
-
-
-
-
-// const affectSkillToShift = async (req, res, next) => {
-//   try {
-//     const { skillId } = req.body;
-//     const shift = await db.shift.findByPk(req.body.shiftId) 
-//     // const startDate = new Date(req.body.startDate);
-//     // const endDate = new Date(req.body.endDate)
-//     //  const shift = await db.shift.create({startDate,endDate}) 
-    
-//     const user = await db.user.findByPk(userId) 
-   
-//     if (!shift) {
-//       return res.send("you need to provide the correct shift id");
-//     }
-//     if (!user) {
-//       return res.send("you need to provide the correct user id");
-//     }
-//     const result = await shift.addUser(user, {
-//       through: { selfGranted: true },
-//     });
-//     if (result.toString() === "0")
-//       return res
-//         .status(400)
-//         .json({ message: "this user is already affected to shift" });
-//     res.send("user affected to shift");
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
 
 
 
