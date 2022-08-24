@@ -1,5 +1,6 @@
 const db = require("../utils/initializeDataBase");
-
+const { Op } = require("@sequelize/core");
+const moment = require("moment");
 /**
  * @swagger
  * components:
@@ -140,6 +141,33 @@ const addSkillToUser = async (req, res, next) => {
   }
 };
 
+const getFreeUser = async (req, res) => {
+  let dateNow = new Date();
+  dateNow = moment(dateNow).format("YYYY-MM-DD");
+  let shifts = await db.shift.findAll({});
+  const filteredShifts = shifts.filter((shift) => {
+    let startDate = moment(shift.startDate).format("YYYY-MM-DD");
+    let endDate = moment(shift.endDate).format("YYYY-MM-DD");
+    return (
+      new Date(startDate).getTime() <= new Date(dateNow).getTime() &&
+      new Date(endDate).getTime() >= new Date(dateNow).getTime()
+    );
+  });
+  console.log(filteredShifts);
+  console.log("-------------------------------------------");
+  console.log(filteredShifts.map((shift) => shift.id));
+  const affectations = await db.affectation.findAll({
+    where: {
+      shiftId: { [Op.in]: filteredShifts.map((shift) => shift.id) },
+    },
+  });
+  const users = await db.user.findAll({
+    where: {
+      id: { [Op.notIn]: affectations.map((aff) => aff.userId) },
+    },
+  });
+  res.send(users);
+};
 module.exports = {
   createUser,
   getAllUsers,
@@ -147,4 +175,5 @@ module.exports = {
   updateUser,
   deleteUser,
   addSkillToUser,
+  getFreeUser,
 };

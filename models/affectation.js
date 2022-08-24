@@ -4,8 +4,8 @@ module.exports = model;
 
 function model(sequelize) {
   const attributes = {
-    startTime: { type: DataTypes.TIME},
-    endTime: { type: DataTypes.TIME},
+    startTime: { type: DataTypes.TIME },
+    endTime: { type: DataTypes.TIME },
   };
 
   const options = {};

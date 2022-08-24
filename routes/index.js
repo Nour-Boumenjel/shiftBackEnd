@@ -20,6 +20,7 @@ router.get("/users", userController.getAllUsers);
 router.get("/affectation", affectationController.getAllShiftUser);
 router.get("/userSkills", userSkillsController.getSkillsByUser);
 router.post("/bestSuggestion", userSkillsController.getBestSuggestion);
+router.get("/freeUser", userController.getFreeUser);
 
 router.get("/Shifts/:shiftId", shiftController.getShiftById);
 router.get("/Skills/:skillId", skillsController.getSkillById);
