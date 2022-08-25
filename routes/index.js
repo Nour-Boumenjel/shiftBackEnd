@@ -36,10 +36,7 @@ router.post("/types", typeController.createType);
 router.post("/pool", poolController.createPool);
 router.post("/users", userController.createUser);
 router.post("/addSkillUser", userController.addSkillToUser);
-router.post(
-  "/addSkillToGroupSkill",
-  groupSkillsController.addSkillToGroupSkills
-);
+router.post("/addSkillToGroupSkill", groupSkillsController.addSkillToGroupSkills);
 router.post("/affectUserToShift", shiftController.affectUserToShift);
 router.post("/affectUserToPool", poolController.addMemberToPool);
 

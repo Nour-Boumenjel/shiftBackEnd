@@ -5,7 +5,7 @@ const swaggerJSDOC = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 const app = express();
 const db = require("./utils/initializeDataBase")
-
+// const sendEmail = require("./utils/sendEmail")
 const routes = require('./routes');
 
 const http = require("http");
@@ -13,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/",routes)
 
-
+//  sendEmail()
 
 
 const server = http.createServer(app);
