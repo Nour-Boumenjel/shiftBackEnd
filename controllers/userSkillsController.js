@@ -16,9 +16,12 @@ const getSkillsByUser = async (req, res) => {
 };
 
 const getBestSuggestion = async (req, res) => {
+  // skills ids
+  const { skillsIds } = req.body;
+  console.log(skillsIds);
   try {
     const listUserSkills = await db.userSkills.findAll({
-      where: { niveau: { [Op.gt]: 0 } },
+      where: { niveau: { [Op.gt]: 0 }, skillId: { [Op.in]: skillsIds } },
     });
     console.log(listUserSkills[1]);
     let userWithSkills = listUserSkills.map((elem) => elem.userId);
@@ -72,7 +75,7 @@ const getBestSuggestion = async (req, res) => {
       where: { id: { [Op.in]: userWithSkills } },
     });
     const allSkills = await db.skills.findAll({
-      where: { id: { [Op.in]: skills } },
+      where: { id: { [Op.in]: skillsIds } },
     });
     newfinalList = newfinalList.map((elem) => {
       elem[0] = users.find(
@@ -80,7 +83,7 @@ const getBestSuggestion = async (req, res) => {
       ).dataValues.firstName;
       elem[1] = allSkills.find(
         (subElem) => subElem.id == mappedSkillIndex[elem[1].toString()]
-      ).dataValues.name;
+      )?.dataValues.name;
       return elem;
     });
 

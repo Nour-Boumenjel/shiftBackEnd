@@ -33,8 +33,8 @@ async function initialize() {
     require("../models/skillsBelongsToGroupSkills")(sequelize);
 
   //foreignKey
-  db.shift.belongsToMany(db.user, { through: "affectations" });
-  db.user.belongsToMany(db.shift, { through: "affectations" });
+  db.shift.belongsToMany(db.user, { through: "affectations", as: "user" });
+  db.user.belongsToMany(db.shift, { through: "affectations", as: "shift" });
 
   db.pool.belongsToMany(db.shift, { through: "ShiftPools" });
   db.shift.belongsToMany(db.pool, { through: "ShiftPools" });
@@ -74,6 +74,8 @@ async function initialize() {
   db.skills.belongsToMany(db.groupSkills, {
     through: "skillsBelongsToGroupSkills",
   });
-
+  await db.type.findOrCreate({
+    where: { name: "Day Off", color: "grey" },
+  });
   await sequelize.sync({ alter: false });
 }
