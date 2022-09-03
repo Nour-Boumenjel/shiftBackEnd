@@ -129,20 +129,25 @@ const getAllShifts = async (req,res) => {
 const getShiftById = async(req,res,async)=> {
     try{
 const {shiftId} = req.params;
-const shift = await db.shift.findOne({
-    where : {id : shiftId},
-    include:{all:true}                      
+const shifts = await db.affectation.findAll({
+    where : { shiftId},
+    include:[{association: "shift", include :{all: true}} ,{association:"user"} ]                    
     
 }
-
 )
-if(shift){
+let shiftSkills = await db.shiftSkills.findAll({
+  where : {shiftId : shiftId} ,
+  include:{all:true}
+})
+if(shifts.length > 0 && shiftSkills.length > 0){
+    let shift = {...shifts[0].shift.dataValues,users:shifts.map(elem =>elem.dataValues.user),groupSkills:shiftSkills.map(elem => elem.groupSkills)}
+console.log(shift)
     return res.status(200).json({shift})
 }else{  
-    return res.status(404).send(' shift does not exists')
+    return res.status(200).send({shift:{...shiftSkills[0].shift,users:[]}})
 }
     }
-    catch{
+    catch(error){
 
  return res.status(500).json({error: error.message})
     }
@@ -193,14 +198,13 @@ const updateShift = async (req, res) => {
     try {
 
       const { shiftId } = req.params;
-      const [ updatedShift ] = await db.shift.update(req.body, {
-      where: { id: shiftId }
-      });
-      if (updatedShift) {
-        const updatedShift = await db.shift.findOne({ where: { id: shiftId } });
-        return res.status(200).json({ shift: updatedShift });
-      }
-      throw new Error('shift not found');
+      const {userIds} = req.body
+      userIds.forEach(async userId => {
+        await db.affectation.findOrCreate({where:{shiftId,userId}})
+      })
+
+
+      
     } catch (error) {
       return res.status(500).send(error.message);
     }

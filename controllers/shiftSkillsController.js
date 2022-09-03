@@ -25,7 +25,7 @@ shiftSkills.forEach((item) => {
    console.log(groups)
   shiftSkills.find((item) => item.shift.id.toString() === shiftId).dataValues.shift.dataValues.groupSkill = groups;
   shiftSkills
-  .find((item) => item.shift.id.toString() === shiftId).dataValues
+  .find((item) => item.shift.id.toString() === shiftId)?.dataValues
   .shift.dataValues.groupSkill.forEach((groupItem) => {
   groupItem.dataValues.skills = shiftSkills
   .filter((item) => item.groupSkill.id === groupItem.id)

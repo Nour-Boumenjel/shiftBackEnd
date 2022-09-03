@@ -1,27 +1,27 @@
 const express = require("express");
+const fs = require("fs")
+const http = require("http");
+
+const path = require('path');
+const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const swaggerJSDOC = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
-const app = express();
-const db = require("./utils/initializeDataBase")
-// const sendEmail = require("./utils/sendEmail")
+
+const db = require("./utils/initializeDataBase");
+sendEmail = require("./utils/sendEmail")
 const routes = require('./routes');
 
-const http = require("http");
 app.use(cors());
 app.use(bodyParser.json());
-app.use("/",routes)
+app.use("/",routes);
+// sendEmail()
 
-//  sendEmail()
-
-
-const server = http.createServer(app);
-
-
-server.listen(5000, () => {
-  console.log("strat app");
-});
+const server = http.createServer({
+  key: fs.readFileSync( "./cert/key.pem"),
+  cert: fs.readFileSync( "./cert/cert.pem"),
+}, app);
 
 const swaggerOptions = {
   definition: {
@@ -34,7 +34,7 @@ const swaggerOptions = {
       
       servers: [
         {
-          url : 'http://localhost:5000'
+          url : 'https://localhost:5000'
         }
       ],
     },
@@ -46,5 +46,8 @@ const swaggerOptions = {
 };
 const swaggerDocs = swaggerJSDOC(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+server.listen(5000, () => {
+  console.log("strat app");
+});
 
 module.exports = app;

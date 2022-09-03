@@ -33,8 +33,12 @@ async function initialize() {
     require("../models/skillsBelongsToGroupSkills")(sequelize);
 
   //foreignKey
-  db.shift.belongsToMany(db.user, { through: "affectations", as: "user" });
-  db.user.belongsToMany(db.shift, { through: "affectations", as: "shift" });
+  db.affectation.belongsTo(db.shift, {  foreignKey: "shiftId",
+  as: "shift",
+  onDelete: "CASCADE", });
+  db.affectation.belongsTo(db.user, {  foreignKey: "userId",
+  as: "user",
+  onDelete: "CASCADE", });
 
   db.pool.belongsToMany(db.shift, { through: "ShiftPools" });
   db.shift.belongsToMany(db.pool, { through: "ShiftPools" });

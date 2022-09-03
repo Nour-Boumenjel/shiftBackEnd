@@ -2,9 +2,9 @@ const db = require('../utils/initializeDataBase');
 const createType = async(req,res)=> {
     try{
     const type = await db.type.create(req.body)
-       return res.status(201).json({
+       return res.status(201).json(
         type,
-    });
+    );
     }
     catch(error){
         return res.status(500).json({error: error.message})
@@ -65,25 +65,26 @@ const updateType= async (req, res) => {
 
 
   
+
 const deleteType = async (req, res) => {
-    const id = req.params.id;
-     await db.types.destroy({
-      where: { id: id }
+  const id = req.params.id;
+ await db.types.destroy({
+    where: { id: id }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.status(204).json({ message: "type deleted " });
+      } else {
+        res.status(404).json({
+          message: `Cannot delete type Maybe type was not found!`
+        });
+      }
     })
-      .then(num => {
-        if (num == 1) {
-          res.status(204).json({ message: "type deleted " });
-        } else {
-          res.status(404).json({
-            message: `Cannot delete type with id=${id}. Maybe type was not found!`
-          });
-        }
-      })
-      .catch(err => {
-        res.status(500).json({
-          message: "Could not delete type with id=" + id
-        
-        })});}
+    .catch(err => {
+      res.status(500).json({
+        message: "Could not delete type " 
+      
+      })});}
 
        
       

@@ -1,8 +1,10 @@
 const { assignAlgoMax } = require("../utils/algorithm");
 const db = require("../utils/initializeDataBase");
+const moment = require("moment")
 const { Op } = require("@sequelize/core");
 const router = require("express").Router();
 
+const sendEmail = require("../utils/sendEmail")
 const getSkillsByUser = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -17,31 +19,46 @@ const getSkillsByUser = async (req, res) => {
 
 const getBestSuggestion = async (req, res) => {
   // skills ids
-  const { skillsIds } = req.body;
+
+  const { skillsIds,shiftId } = req.body;
   console.log(skillsIds);
   try {
+   await  db.affectation.destroy({ where: { shiftId}})
+    // get shifts affected today
+    let listUserShift = await db.affectation.findAll({include:{all:true}})
+    
+    listUserShift=listUserShift.filter(elem => {
+      return moment(elem.shift.startDate).format("YYYY-MM-DD") === moment(new Date()).format("YYYY-MM-DD")
+    })
+   
+    // return res.send(listUserShift)
+// get user with skill 
     const listUserSkills = await db.userSkills.findAll({
       where: { niveau: { [Op.gt]: 0 }, skillId: { [Op.in]: skillsIds } },
     });
-    console.log(listUserSkills[1]);
+
     let userWithSkills = listUserSkills.map((elem) => elem.userId);
+  
     userWithSkills = [...new Set(userWithSkills)];
-    console.log(userWithSkills);
+    // userWithSkills = [1,1,2,2]
+    console.log("---------------------------------------")
+    console.log( listUserShift.map(aff => aff.userId))
+    userWithSkills= userWithSkills.filter(userId => !listUserShift.map(aff => aff.userId).includes(userId))
+   
     const mappedUserIndex = userWithSkills.reduce((result, filter, index) => {
       result[index] = filter;
       return result;
     }, {});
 
-    console.log(mappedUserIndex);
+ 
     let skills = listUserSkills.map((elem) => elem.skillId);
     skills = [...new Set(skills)];
+    console.log(skills)
     const mappedSkillIndex = skills.reduce((result, filter, index) => {
       result[index] = filter;
       return result;
     }, {});
-    console.log(skills);
-    console.log("mappedSkillIndex", mappedSkillIndex);
-    console.log("--------------------------------------------------1");
+
     let finalList = userWithSkills.map((user) => {
       return skills.map((skill) => {
         return listUserSkills.find((el) => {
@@ -64,13 +81,12 @@ const getBestSuggestion = async (req, res) => {
           : 0;
       });
     });
-    console.log("--------------------------------------------------2");
-    console.log(finalList);
+
     if (finalList.length == 0) {
       throw Error("no users with skills");
     }
     let newfinalList = assignAlgoMax(finalList);
-    console.log(newfinalList);
+
     const users = await db.user.findAll({
       where: { id: { [Op.in]: userWithSkills } },
     });
@@ -80,13 +96,15 @@ const getBestSuggestion = async (req, res) => {
     newfinalList = newfinalList.map((elem) => {
       elem[0] = users.find(
         (subElem) => subElem.id == mappedUserIndex[elem[0].toString()]
-      ).dataValues.firstName;
+      ).dataValues;
       elem[1] = allSkills.find(
         (subElem) => subElem.id == mappedSkillIndex[elem[1].toString()]
-      )?.dataValues.name;
+      )?.dataValues;
       return elem;
     });
-
+    
+    // sendEmail("",users.map(user => user.email))
+  // sendEmail("",["mohamedskander.bennia@gmail.com","boumenjel51@gmail.com"])
     return res.status(200).json(newfinalList);
   } catch (err) {
     console.log(err);

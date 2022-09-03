@@ -45,7 +45,7 @@ router.delete("/shifts/:id", shiftController.deleteShift);
 router.delete("/skills/:id", skillsController.deleteSkill);
 router.delete("/groupSkills/:id", groupSkillsController.deleteGroupSkills);
 router.delete("/pool/:id", poolController.deletePool);
-router.delete("/types/:id", typeController.deleteType);
+router.delete("/type/:id", typeController.deleteType);
 router.delete("/user/:userId", userController.deleteUser);
 router.delete(
   "/affectation/:shiftId/:userId",
@@ -61,5 +61,4 @@ router.put("/skills/:skillId", skillsController.updateSkill);
 router.put("/pool/:PoolId", poolController.updatePool);
 router.put("/types/:typeId", typeController.updateType);
 router.put("/users/:userId", userController.updateUser);
-
 module.exports = router;

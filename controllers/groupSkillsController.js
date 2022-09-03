@@ -1,6 +1,6 @@
-
 const db = require('../utils/initializeDataBase');
-
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 /**
  * @swagger
  * components:
@@ -64,6 +64,19 @@ const createGroupSkills = async(req,res)=> {
     }
 }
 
+const getPagination = (page, size) => {
+  const limit = size ? +size : 3;
+  const offset = page ? page * limit : 0;
+  return { limit, offset };
+};
+
+const getPagingData = (data, page, limit) => {
+  const { count: totalItems, rows: docs } = data;
+  const currentPage = page ? +page : 0;
+  const totalPages = Math.ceil(totalItems / limit);
+  return { totalItems, docs, totalPages, currentPage };
+};
+
 /**
  * @swagger
  * /groupSkills:
@@ -88,6 +101,36 @@ const getAllGroupSkills = async (req,res) => {
     }
 }
 
+// const getAllGroupSkills = async (req, res) => {
+//   try {
+//     const { page, size } = req.query;
+//     const searchValue = req.query.searchValue;
+//     const { limit, offset } = getPagination(page, size);
+
+//     if (searchValue) {
+//       const groups = await db.groupSkills.findAndCountAll({
+//         where: {
+//           [Op.or]: [{ name: { [Op.like]: `%${searchValue}%` } }],
+//         },
+//         include: { all: true },
+//         limit,
+//         offset,
+//       });
+
+//       res.status(200).json(getPagingData(groups, page, limit));
+//     } else {
+//       const groups = await db.groupSkills.findAndCountAll({
+//         include: { all: true },
+//         limit,
+//         offset,
+//       });
+
+//       res.status(200).json(getPagingData(groups, page, limit));
+//     }
+//   } catch (error) {
+//     return res.status(500).json({ error: error.message });
+//   }
+// };
 
 
 const getGroupById = async(req,async)=> {
