@@ -14,9 +14,9 @@ sendEmail = require("./utils/sendEmail")
 const routes = require('./routes');
 
 app.use(cors(
-  {
-    origin: 'https//localhost:3000'
-}
+//   {
+//     origin: 'https//localhost:3000'
+// }
 ));
 app.use(bodyParser.json());
 app.use("/",routes);

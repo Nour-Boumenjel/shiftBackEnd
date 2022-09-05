@@ -1,4 +1,4 @@
-const express = require("express");
+const { Router } = require("express");
 const shiftController = require("../controllers/shiftController");
 const skillsController = require("../controllers/skillsController");
 const groupSkillsController = require("../controllers/groupSkillsController");
@@ -10,7 +10,7 @@ const affectationController = require("../controllers/affectationController");
 const skillsBelongsToGroupSkillsController = require("../controllers/skillsBelongsToGroupSkillsController");
 const shiftSkillsController = require("../controllers/shiftSkillsController");
 const authController = require("../controllers/authController");
-const router = express.Router();
+const router = Router();
 router.get("/Shifts", shiftController.getAllShifts);
 router.get("/Skills", skillsController.getAllSkills);
 router.get("/groupSkills", groupSkillsController.getAllGroupSkills);
