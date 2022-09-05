@@ -13,7 +13,11 @@ const db = require("./utils/initializeDataBase");
 sendEmail = require("./utils/sendEmail")
 const routes = require('./routes');
 
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'https//localhost:3000'
+}
+));
 app.use(bodyParser.json());
 app.use("/",routes);
 // sendEmail()
