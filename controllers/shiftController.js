@@ -73,7 +73,6 @@ const createShift = async(req,res) => {
     await db.shiftSkills.create({groupSkillId:gs.groupId,skillId:gs.skillId,effectif :gs.effectif,shiftId:shift.id})
    })
 
-   console.log(skillList)
        return res.status(201).json(
           shift,
         ); 
@@ -126,7 +125,7 @@ const getAllShifts = async (req,res) => {
 
 
 
-const getShiftById = async(req,res,async)=> {
+const getShiftById = async(req,res)=> {
     try{
 const {shiftId} = req.params;
 const shifts = await db.affectation.findAll({
@@ -135,13 +134,16 @@ const shifts = await db.affectation.findAll({
     
 }
 )
+
 let shiftSkills = await db.shiftSkills.findAll({
   where : {shiftId : shiftId} ,
   include:{all:true}
 })
+
 if(shifts.length > 0 && shiftSkills.length > 0){
-    let shift = {...shifts[0].shift.dataValues,users:shifts.map(elem =>elem.dataValues.user),groupSkills:shiftSkills.map(elem => elem.groupSkills)}
-console.log(shift)
+    let shift = {...shifts[0].shift.dataValues,users:shifts.map(elem =>elem.dataValues.user),groupSkills:shiftSkills.map(elem => elem.groupSkill.dataValues)}
+    // console.log(shift)
+   
     return res.status(200).json({shift})
 }else{  
     return res.status(200).send({shift:{...shiftSkills[0].shift,users:[]}})
@@ -253,7 +255,7 @@ const deleteShift = async (req, res) => {
       
       })});}
 
-const affectUserToShift = async (req, res, next) => {
+const affectUserToShift = async (req, res) => {
   try {
     const { userId } = req.body;
     const shift = await db.shift.findByPk(req.body.shiftId) 
@@ -282,13 +284,29 @@ const affectUserToShift = async (req, res, next) => {
 
 
 
+const getShiftsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const shifts = await db.affectation.findAll({
+      where: { userId: userId },
+      include: [{ association: "shift", include: { all: true } }, { association: "user" }]
 
+    });
+    res.status(200).json(shifts);
+  }
+  catch (err) {
+    console.log(err);npm 
+  }
+
+}
 
 module.exports = {
+
     createShift,
     getAllShifts,
     getShiftById,
     updateShift,
     deleteShift,
-    affectUserToShift
+    affectUserToShift,
+    getShiftsByUser,
 }

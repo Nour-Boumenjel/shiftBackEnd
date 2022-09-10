@@ -68,7 +68,7 @@ const updateType= async (req, res) => {
 
 const deleteType = async (req, res) => {
   const id = req.params.id;
- await db.types.destroy({
+ await db.type.destroy({
     where: { id: id }
   })
     .then(num => {

@@ -18,6 +18,7 @@ async function initialize() {
   //  await connection.query(`CREATE DATABASE IF NOT EXISTS  \`${database}\`;`);
   const sequelize = new Sequelize(database, user, password, {
     dialect: "mysql",
+    logging : false,
   });
 
   db.shift = require("../models/shift")(sequelize);

@@ -21,7 +21,8 @@ router.get("/affectation", affectationController.getAllShiftUser);
 router.get("/userSkills", userSkillsController.getSkillsByUser);
 router.post("/bestSuggestion", userSkillsController.getBestSuggestion);
 router.get("/freeUser", userController.getFreeUser);
-
+router.get("/workedUser",userController.getWorkedUser);
+router.get("/shiftsByUser/:userId",shiftController.getShiftsByUser);
 router.get("/Shifts/:shiftId", shiftController.getShiftById);
 router.get("/Skills/:skillId", skillsController.getSkillById);
 router.get("/users/:userId", userController.getUserById);
@@ -29,6 +30,7 @@ router.post("/auth/login", authController.login);
 router.get("/Pool/:poolId", poolController.getPoolById);
 router.get("/Types/:typeId", typeController.getTypeById);
 router.get("/shiftSkills/:shiftId", shiftSkillsController.getSkillsByShift);
+router.patch("/shiftSkills/:shiftId", shiftSkillsController.updateShiftSkill);
 
 router.post("/shifts", shiftController.createShift);
 router.post("/skills", skillsController.createSkills);

@@ -3,7 +3,7 @@ const db = require("../utils/initializeDataBase");
 exports.login = async (req, res) => {
   try {
     const { email } = req.body;
-    console.log(email);
+
     const user = await db.user.findOne({ where: { email } });
     if (!user) {
       return res.status(404).send("user does not exists");

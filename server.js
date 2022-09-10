@@ -38,7 +38,7 @@ const swaggerOptions = {
       
       servers: [
         {
-          url : 'https://localhost:5000'
+          url : 'http://localhost:5000'
         }
       ],
     },
@@ -51,7 +51,7 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDOC(swaggerOptions);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 server.listen(5000, () => {
-  console.log("strat app");
+  console.log("start app");
 });
 
 module.exports = app;

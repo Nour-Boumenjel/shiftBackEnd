@@ -153,9 +153,7 @@ const getFreeUser = async (req, res) => {
       new Date(endDate).getTime() >= new Date(dateNow).getTime()
     );
   });
-  console.log(filteredShifts);
-  console.log("-------------------------------------------");
-  console.log(filteredShifts.map((shift) => shift.id));
+
   const affectations = await db.affectation.findAll({
     where: {
       shiftId: { [Op.in]: filteredShifts.map((shift) => shift.id) },
@@ -168,6 +166,24 @@ const getFreeUser = async (req, res) => {
   });
   res.send(users);
 };
+
+const getWorkedUser = async(req,res) => {
+
+  const affectations = await db.affectation.findAll({
+    include: { all: true },
+   
+    },
+  );
+  const users = await db.user.findAll({
+    where: {
+      id: { [Op.in]: affectations.map((aff) => aff.userId) },
+    },
+  });
+  res.send(users);
+
+}
+
+
 module.exports = {
   createUser,
   getAllUsers,
@@ -176,4 +192,5 @@ module.exports = {
   deleteUser,
   addSkillToUser,
   getFreeUser,
+  getWorkedUser
 };

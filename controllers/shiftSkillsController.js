@@ -16,13 +16,12 @@ let shiftSkills = await db.shiftSkills.findAll({
 if(shiftSkills){
  let groups = []
 shiftSkills.forEach((item) => {
-    // console.log(item.shift)
       groups.push(item.groupSkill);
   });
   groups = groups.filter((group, index, arrayGroup) => {
     return arrayGroup.findIndex((item) => item.id === group.id) === index;
   });
-   console.log(groups)
+
   shiftSkills.find((item) => item.shift.id.toString() === shiftId).dataValues.shift.dataValues.groupSkill = groups;
   shiftSkills
   .find((item) => item.shift.id.toString() === shiftId)?.dataValues
@@ -57,7 +56,29 @@ shiftSkills.forEach((item) => {
     }
 
 }
+const updateShiftSkill = async(req,res,async)=>{
+  const { groupSkills} = req.body
+  const {shiftId} = req.params
+  try{
+    await db.shiftSkills.destroy({
+      where: { shiftId: shiftId, skillId: { [Op.in]: groupSkills.map((elem) => elem.skillId) }
+     }
+    })
+    groupSkills.forEach(async gs => {
+      await db.shiftSkills.create({effectif:gs.effectif,skillId:gs.skillId,groupSkillId:gs.groupSkillId,shiftId:shiftId})
+          
+      
+    })
+    return res.status(200).json({message:"ok"})
+
+  }
+  
+    catch(err){
+
+    }
+}
 
 module.exports = {
-    getSkillsByShift
+    getSkillsByShift,
+    updateShiftSkill
 }
