@@ -13,12 +13,12 @@ async function initialize() {
     user,
     password,
   });
-  // await connection.query("DROP DATABASE "+ database)
-  // await connection.query("CREATE DATABASE "+ database)
+  // await connection.query("DROP DATABASE " + database);
+  // await connection.query("CREATE DATABASE " + database);
   //  await connection.query(`CREATE DATABASE IF NOT EXISTS  \`${database}\`;`);
   const sequelize = new Sequelize(database, user, password, {
     dialect: "mysql",
-    logging : false,
+    logging: false,
   });
 
   db.shift = require("../models/shift")(sequelize);
@@ -34,12 +34,16 @@ async function initialize() {
     require("../models/skillsBelongsToGroupSkills")(sequelize);
 
   //foreignKey
-  db.affectation.belongsTo(db.shift, {  foreignKey: "shiftId",
-  as: "shift",
-  onDelete: "CASCADE", });
-  db.affectation.belongsTo(db.user, {  foreignKey: "userId",
-  as: "user",
-  onDelete: "CASCADE", });
+  db.affectation.belongsTo(db.shift, {
+    foreignKey: "shiftId",
+    as: "shift",
+    onDelete: "CASCADE",
+  });
+  db.affectation.belongsTo(db.user, {
+    foreignKey: "userId",
+    as: "user",
+    onDelete: "CASCADE",
+  });
 
   db.pool.belongsToMany(db.shift, { through: "ShiftPools" });
   db.shift.belongsToMany(db.pool, { through: "ShiftPools" });
@@ -80,7 +84,7 @@ async function initialize() {
     through: "skillsBelongsToGroupSkills",
   });
   await db.type.findOrCreate({
-    where: { name: "Day Off", color: "grey" },
+    where: { name: "Day Shift", color: "yellow" },
   });
   await sequelize.sync({ alter: false });
 }
