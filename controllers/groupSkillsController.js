@@ -101,36 +101,36 @@ const getAllGroupSkills = async (req,res) => {
     }
 }
 
-// const getAllGroupSkills = async (req, res) => {
-//   try {
-//     const { page, size } = req.query;
-//     const searchValue = req.query.searchValue;
-//     const { limit, offset } = getPagination(page, size);
+const getAllGroupSkillsWithPagination = async (req, res) => {
+  try {
+    const { page, size } = req.query;
+    const searchValue = req.query.searchValue;
+    const { limit, offset } = getPagination(page, size);
 
-//     if (searchValue) {
-//       const groups = await db.groupSkills.findAndCountAll({
-//         where: {
-//           [Op.or]: [{ name: { [Op.like]: `%${searchValue}%` } }],
-//         },
-//         include: { all: true },
-//         limit,
-//         offset,
-//       });
+    if (searchValue) {
+      const groups = await db.groupSkills.findAndCountAll({
+        where: {
+          [Op.or]: [{ name: { [Op.like]: `%${searchValue}%` } }],
+        },
+        include: { all: true },
+        limit,
+        offset,
+      });
 
-//       res.status(200).json(getPagingData(groups, page, limit));
-//     } else {
-//       const groups = await db.groupSkills.findAndCountAll({
-//         include: { all: true },
-//         limit,
-//         offset,
-//       });
+      res.status(200).json(getPagingData(groups, page, limit));
+    } else {
+      const groups = await db.groupSkills.findAndCountAll({
+        include: { all: true },
+        limit,
+        offset,
+      });
 
-//       res.status(200).json(getPagingData(groups, page, limit));
-//     }
-//   } catch (error) {
-//     return res.status(500).json({ error: error.message });
-//   }
-// };
+      res.status(200).json(getPagingData(groups, page, limit));
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 
 const getGroupById = async(req,async)=> {
@@ -336,5 +336,6 @@ module.exports = {
     getGroupById,
     updateGroupSkill,
     deleteGroupSkills,
-    addSkillToGroupSkills
+    addSkillToGroupSkills,
+    getAllGroupSkillsWithPagination
 }

@@ -28,11 +28,14 @@ const getBestSuggestion = async (req, res) => {
     let listUserShift = await db.affectation.findAll({
       include: { all: true },
     });
-
+    const selectedShift = await db.shift.findByPk(shiftId)
+    console.log(selectedShift)
     listUserShift = listUserShift.filter((elem) => {
+      // console.log(elem.shift.startDate)
       return (
-        moment(elem.shift.startDate).format("YYYY-MM-DD") ===
-        moment(new Date()).format("YYYY-MM-DD")
+        moment(elem.shift.startDate).format("YYYY-MM-DD") >=
+        moment(selectedShift?.dataValues.startDate).format("YYYY-MM-DD")&& moment(elem.shift.endDate).format("YYYY-MM-DD") <=
+        moment(selectedShift?.dataValues.endDate).format("YYYY-MM-DD")
       );
     });
 
@@ -44,6 +47,7 @@ const getBestSuggestion = async (req, res) => {
         skillId: { [Op.in]: skillsIds.map((elem) => elem.skillId) },
       },
     });
+    console.log(skillsIds)
 
     let userWithSkills = listUserSkills.map((elem) => elem.userId);
 

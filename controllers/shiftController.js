@@ -78,10 +78,6 @@ const createShift = async(req,res) => {
         ); 
    
 
- 
-
-   
-
     }
     catch(error){
         return res.status(500).json({error: error.message})
@@ -91,7 +87,38 @@ const createShift = async(req,res) => {
 
 
 
+const createDayOff = async(req,res) => {
+ const shiftId = req.body
+ const { userIds } = req.body;
+ console.log(req.body)
+ 
+    
+    try{
+      
+   const shift = await db.shift.create({startDate:req.body.startDate,endDate:req.body.endDate,typeId:req.body.typeId})
+   console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", shift)
+   const shiftId = shift?.dataValues?.id
+   console.log("shiftId",shiftId)
+   if(shift){
+    userIds.forEach(async userId=> 
+      await db.affectation.create({shiftId,userId})
+      )
+    
+   }
+    
+   
 
+       return res.status(201).json(
+          shift,
+        ); 
+   
+
+    }
+    catch(error){
+        return res.status(500).json({error: error.message})
+
+    }
+}
 
 
 
@@ -133,7 +160,9 @@ const shifts = await db.affectation.findAll({
     include:[{association: "shift", include :{all: true}} ,{association:"user"} ]                    
     
 }
+
 )
+
 
 let shiftSkills = await db.shiftSkills.findAll({
   where : {shiftId : shiftId} ,
@@ -299,6 +328,29 @@ const getShiftsByUser = async (req, res) => {
   }
 
 }
+const getDayOffShift = async (req, res) =>{
+  try{
+    const {shiftId} = req.params;
+const shifts = await db.affectation.findAll({
+    where : { shiftId},
+    include:[{association: "shift", include :{all: true}} ,{association:"user"} ]                    
+    
+})
+if(shifts.length > 0 ){
+  let shift = {...shifts[0].shift.dataValues,users:shifts.map(elem =>elem.dataValues.user)}
+  // console.log(shift)
+ 
+  return res.status(200).json({shift})
+}else{  
+  return res.status(200).send({shift:{...shiftSkills[0].shift,users:[]}})
+
+
+
+  }}
+  catch (err) {
+
+  }
+}
 
 module.exports = {
 
@@ -309,4 +361,6 @@ module.exports = {
     deleteShift,
     affectUserToShift,
     getShiftsByUser,
+    createDayOff,
+    getDayOffShift
 }
