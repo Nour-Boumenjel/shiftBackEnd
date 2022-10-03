@@ -2,6 +2,7 @@
 const db = require('../utils/initializeDataBase');
 const router = require('express').Router();
 const {Op}  = require("@sequelize/core")
+const moment = require("moment");
 
 /**
  * @swagger
@@ -63,8 +64,16 @@ const createShift = async(req,res) => {
   
         })
 
-    
     try{
+      let selectedShifts = await db.shift.findAll({include: { all: true }})
+     selectedShifts = selectedShifts.filter(elem => {
+      return moment(elem.startDate).format("YYYY-MM-DD") ==
+      moment(req.body.startDate).format("YYYY-MM-DD")
+     }) 
+     if(selectedShifts.map(elem=> elem.dataValues.type.dataValues.id).includes(req.body.typeId)){
+      return res.status(400).send("this type of shift already exists")
+     }
+    //  console.log(selectedShifts)
    const shift = await db.shift.create({startDate: req.body.startDate,endDate:req.body.endDate,typeId:req.body.typeId})
    
    const skillList = await db.skills.findAll({where:{id:{[Op.in]:groupSkills.map(gs => gs.skillId)}}})
@@ -96,9 +105,9 @@ const createDayOff = async(req,res) => {
     try{
       
    const shift = await db.shift.create({startDate:req.body.startDate,endDate:req.body.endDate,typeId:req.body.typeId})
-   console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", shift)
+  //  console.log("aa", shift)
    const shiftId = shift?.dataValues?.id
-   console.log("shiftId",shiftId)
+  //  console.log("shiftId",shiftId)
    if(shift){
     userIds.forEach(async userId=> 
       await db.affectation.create({shiftId,userId})
@@ -161,25 +170,30 @@ const shifts = await db.affectation.findAll({
     
 }
 
+
 )
+const selectedShift = await db.shift.findByPk(shiftId)
 
 
 let shiftSkills = await db.shiftSkills.findAll({
   where : {shiftId : shiftId} ,
   include:{all:true}
 })
-
-if(shifts.length > 0 && shiftSkills.length > 0){
-    let shift = {...shifts[0].shift.dataValues,users:shifts.map(elem =>elem.dataValues.user),groupSkills:shiftSkills.map(elem => elem.groupSkill.dataValues)}
+// console.log(shifts[0])
+console.log(shiftSkills)
+if(shiftSkills.length > 0){
+    let shift = {...selectedShift.dataValues,users:shifts.map(elem =>elem.dataValues.user),groupSkills:shiftSkills.map(elem => elem.groupSkill.dataValues)}
     // console.log(shift)
    
     return res.status(200).json({shift})
 }else{  
-    return res.status(200).send({shift:{...shiftSkills[0].shift,users:[]}})
+   console.log("hello")
+    console.log(shifts)
+    return res.status(200).send({shift:{...selectedShift.dataValues.dataValues,users:shifts.map(elem =>elem.dataValues.user)}})
 }
     }
     catch(error){
-
+ console.log(error)
  return res.status(500).json({error: error.message})
     }
 
@@ -286,7 +300,7 @@ const deleteShift = async (req, res) => {
 
 const affectUserToShift = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId,shiftId } = req.body;
     const shift = await db.shift.findByPk(req.body.shiftId) 
     
     
@@ -298,13 +312,7 @@ const affectUserToShift = async (req, res) => {
     if (!user) {
       return res.send("you need to provide the correct user id");
     }
-    const result = await shift.addUser(user, {
-      through: { selfGranted: true },
-    });
-    if (result.toString() === "0")
-      return res
-        .status(400)
-        .json({ message: "this user is already affected to shift" });
+   await db.affectation.create({userId,shiftId})
     res.send("user affected to shift");
   } catch (err) {
     console.log(err);

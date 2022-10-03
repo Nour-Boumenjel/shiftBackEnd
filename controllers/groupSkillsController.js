@@ -59,7 +59,8 @@ const createGroupSkills = async(req,res)=> {
     );
     }
     catch(error){
-        return res.status(500).json({error: error.message})
+        // return res.status(500).json({error: error.message})
+        return res.status(500).send("Something is wrong")
 
     }
 }
@@ -303,6 +304,27 @@ const updateGroupSkill= async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+
+
+
+const updateSkill= async (req, res) => {
+
+    try {
+
+      const { skillId } = req.params;
+      const [ updatedSkill ] = await db.skills.update(req.body, {
+      where: { id: skillId }
+      });
+      if (updatedSkill) {
+        const updatedSkill = await db.skills.findOne({ where: { id: skillId } });
+        return res.status(200).json({ skill: updatedSkill });
+      }
+      throw new Error('skill not found');
+    } catch (error) {
+      return res.status(500).send(error.message);
+    }
+  };
 
 const addSkillToGroupSkills = async (req, res, next) => {
   try {

@@ -39,6 +39,21 @@ const moment = require("moment");
  *          idMonitoring : "123654"
  */
 
+
+
+ const getPagination = (page, size) => {
+  const limit = size ? +size : 3;
+  const offset = page ? page * limit : 0;
+  return { limit, offset };
+};
+
+const getPagingData = (data, page, limit) => {
+  const { count: totalItems, rows: docs } = data;
+  const currentPage = page ? +page : 0;
+  const totalPages = Math.ceil(totalItems / limit);
+  return { totalItems, docs, totalPages, currentPage };
+};
+
 const createUser = async (req, res) => {
   try {
     const user = await db.user.create(req.body);
@@ -70,6 +85,43 @@ const getAllUsers = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+
+const getAllUsersWithPagination = async (req, res) => {
+  try {
+    const { page, size } = req.query;
+    const searchValue = req.query.searchValue;
+    const { limit, offset } = getPagination(page, size);
+
+    if (searchValue) {
+      const users = await db.user.findAndCountAll({
+        where: {
+          [Op.or]: [{ firstName: { [Op.like]: `%${searchValue}%` } }],
+        },
+        include: { all: true },
+        limit,
+        offset,
+      });
+
+      res.status(200).json(getPagingData(users, page, limit));
+    } else {
+      const users = await db.user.findAndCountAll({
+        include: { all: true },
+        limit,
+        offset,
+      });
+
+      res.status(200).json(getPagingData(users, page, limit));
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+
 
 const getUserById = async (req, res) => {
   try {
@@ -182,6 +234,15 @@ const getWorkedUser = async(req,res) => {
   res.send(users);
 
 }
+const getUserBySkills = async (req,res)=>{
+  const {skillIds} = req.body
+  let usersSkills= await db.userSkills.findAll({ where:{ skillId:{[Op.in]:skillIds} },include:{all:true}});
+  console.log(usersSkills)
+  usersSkills = usersSkills.map(userSkill => {
+    return { firstName:userSkill.dataValues.user.dataValues.firstName, lastName:userSkill.dataValues.user.dataValues.lastName, skill:{name:userSkill.dataValues.skill.dataValues.name}}
+  })
+  res.send(usersSkills);
+}
 
 
 module.exports = {
@@ -192,5 +253,7 @@ module.exports = {
   deleteUser,
   addSkillToUser,
   getFreeUser,
-  getWorkedUser
+  getWorkedUser,
+  getUserBySkills,
+  getAllUsersWithPagination
 };

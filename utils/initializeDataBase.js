@@ -84,7 +84,7 @@ async function initialize() {
     through: "skillsBelongsToGroupSkills",
   });
   await db.type.findOrCreate({
-    where: { name: "Day Shift", color: "yellow" },
+    where: { name: "Day Off", color: "gray" },
   });
   await sequelize.sync({ alter: false });
 }

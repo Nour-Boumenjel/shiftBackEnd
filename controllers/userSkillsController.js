@@ -129,7 +129,31 @@ const getBestSuggestion = async (req, res) => {
   }
 };
 
+const deleteSkillFromUser = async (req, res) => {
+  // const id = req.params.id;
+  const userId = req.params.userId;
+   const skillId = req.params.skillId;
+ await db.userSkills.destroy({
+    where: { skillId: skillId, userId: userId
+   }
+  })
+    .then(num => {
+      if (num == 1) {
+        res.status(204).json({ message: "skill deleted from user" });
+      } else {
+        res.status(404).json({
+          message: `Cannot delete skill from user Maybe user was not found!`
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete skill "
+      
+      })});}
+
 module.exports = {
   getSkillsByUser,
   getBestSuggestion,
+  deleteSkillFromUser
 };

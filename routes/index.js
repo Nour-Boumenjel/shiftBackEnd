@@ -24,6 +24,7 @@ router.get("/userSkills", userSkillsController.getSkillsByUser);
 router.post("/bestSuggestion", userSkillsController.getBestSuggestion);
 router.get("/freeUser", userController.getFreeUser);
 router.get("/workedUser",userController.getWorkedUser);
+router.get("/usersWithPagination",userController.getAllUsersWithPagination);
 router.get("/shiftsByUser/:userId",shiftController.getShiftsByUser);
 router.get("/Shifts/:shiftId", shiftController.getShiftById);
 router.get("/DayOffShift/:shiftId",shiftController.getDayOffShift)
@@ -46,6 +47,7 @@ router.post("/addSkillUser", userController.addSkillToUser);
 router.post("/addSkillToGroupSkill", groupSkillsController.addSkillToGroupSkills);
 router.post("/affectUserToShift", shiftController.affectUserToShift);
 router.post("/affectUserToPool", poolController.addMemberToPool);
+router.post("/usersWithSkills",userController.getUserBySkills);
 
 router.delete("/shifts/:id", shiftController.deleteShift);
 router.delete("/skills/:id", skillsController.deleteSkill);
@@ -58,10 +60,13 @@ router.delete(
   affectationController.deleteAffectation
 );
 
+router.delete(
+  "/userSkills/:skillId/:userId",
+  userSkillsController.deleteSkillFromUser
+);
+
 router.put("/shifts/:shiftId", shiftController.updateShift);
-router.put(
-  "/groupSkills/:groupSkillId",
-  groupSkillsController.updateGroupSkill
+router.put( "/groupSkills/:groupSkillId", groupSkillsController.updateGroupSkill
 );
 router.put("/skills/:skillId", skillsController.updateSkill);
 router.put("/pool/:PoolId", poolController.updatePool);
